@@ -1,1 +1,32 @@
-# kubectl_file
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wpdb
+  labels:
+    app: wpdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wpdb
+  template:
+    metadata:
+      labels:
+        app: wpdb
+    spec:
+      containers:
+      - image: mariadb
+        name: apache
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wpdb
+spec:
+  ports:
+    - port: 3306
+  type: ClusterIP
+  selector:
+    app: wpdb
