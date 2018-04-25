@@ -1,0 +1,77 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wpdb
+  labels:
+    app: wpdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wpdb
+  template:
+    metadata:
+      labels:
+        app: wpdb
+    spec:
+      containers:
+      - image: mariadb
+        name: wpdb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpass"
+        - name: MYSQL_DATABASE
+          value: "wordpress"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wpdb
+spec:
+  ports:
+    - port: 3306
+  type: ClusterIP
+  selector:
+    app: wpdb
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wpweb
+  labels:
+    app: wpweb
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wpweb
+  template:
+    metadata:
+      labels:
+        app: wpweb
+    spec:
+      containers:
+      - image: wordpress
+        name: wpweb
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: "wpdb"
+        - name: WORDPRESS_DB_PASSWORD
+          value: "rootpass"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wpweb
+spec:
+  ports:
+    - port: 80
+  type: LoadBalancer
+  selector:
+    app: wpweb
