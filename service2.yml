@@ -17,6 +17,11 @@ spec:
       containers:
       - image: mariadb
         name: wpdb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpass"
+        - name: MYSQL_DATABASE
+          value: "wordpress"
 
 ---
 
@@ -52,6 +57,11 @@ spec:
       containers:
       - image: wordpress
         name: wpweb
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: "wpdb"
+        - name: WORDPRESS_DB_PASSWORD
+          value: "rootpass"
 
 ---
 
